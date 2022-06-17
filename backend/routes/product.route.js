@@ -18,11 +18,6 @@ routes
   .get(ProductCtrl.findById)
   .delete(ProductCtrl.deleteProduct)
 
-// routes
-//   .route("/valorations")
-//   .get(ValorationCtrl.findAllValorations)
-//   .post(ValorationCtrl.addValoration);
-
 routes
   .route("/valorations/:id")
   .get(ValorationCtrl.findAllValorations)

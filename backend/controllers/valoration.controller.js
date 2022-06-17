@@ -1,17 +1,12 @@
 const Valoration = require("../models/valoration.model.js");
 const Product = require("../models/product.model.js")
 
-let idValoration = '';
+// let idValoration = '';
+
 let idsValorations = []
 
 // RECOGER TODAS LAS VALORACIONES + RECOGER TODAS LAS VALORACIONES DE UN PRODUCTO
 exports.findAllValorations = async (req, res) => {
-    // Valoration.find({}).exec().then((Valorations) => {
-    //     console.log('RESPONSE FIND ALL VALORATIONS', Valorations);
-    //     res.status(200).json(Valorations);
-    // }).catch((err) => {
-    //     res.status(500).json(err);
-    // });
     Product.findById(req.params.id, function(err, product) {
         if(err) {
             res.status(500).json(err)
@@ -26,9 +21,9 @@ exports.findAllValorations = async (req, res) => {
             res.status(500).json(err);
         });
     });
-    
 };
 
+// AQUÍ CADA VEZ QUE AÑADA UNA VALORACIÓN HAGO LA MEDIA Y MODIFICO EL VALOR DE rateTotal
 // AÑADIR UNA VALORACION Y SE AÑADIRÁ AL PRODUCTO
 // Esto recibe el id del producto por params y el contenido de la valoración por body
 exports.addValoration = async (req, res) => {
@@ -41,21 +36,34 @@ exports.addValoration = async (req, res) => {
         comment: req.body.comment,
     });
 
-    Valoration.create(valoration).then((valoration) => {
+    let allRates = []
+    await Valoration.create(valoration).then( async (valoration) => {
         res.status(200).json(valoration)
-        console.log("Valoracion", valoration._id)
-        idValoration = valoration._id
+        let valorationObject = valoration
+        allRates.push(valoration.rate)
+        
+       await Product.findById(req.params.id, async (err, product) => {
+            if(err) {
+                res.status(500).json(err)
+            } 
+            console.log('Produvto: ', product)
+            product.valorations.map( (val) => {
+                console.log("VAL RATE",val.rate)
+                allRates.push(val.rate)
+            });
 
-        Product.findByIdAndUpdate(req.params.id,
-            {"$push": {"valorations": idValoration}},
-            {"new": true, "upsert": true},
-            (err, product) => {
-                if (err) console.error("ERROR TO UPDATE ", err);
-                console.log("UPDATE PRODUCT ", product);
-                console.log("Lista de ids valoraciones", product.valorations)
-                idsValorations = product.valorations
-            }
-        )
+            let averageRate = allRates.reduce((a, b) => a + b, 0) / allRates.length
+
+            console.log("AVERAGE", averageRate.toFixed(2))
+            await Product.findByIdAndUpdate(req.params.id,
+                {"$set": {"rateTotal": averageRate.toFixed(0)}, "$push": {"valorations": valorationObject}},
+                {"new": true, "upsert": true},
+                (err, product) => {
+                    if (err) console.error("ERROR TO UPDATE ", err);
+                    console.log("UPDATE PRODUCT ", product);
+                }
+            )
+        })
     }).catch(err => {
         res.status(500).json(err)
     });

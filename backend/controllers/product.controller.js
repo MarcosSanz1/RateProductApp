@@ -3,7 +3,6 @@ const Product = require("../models/product.model.js");
 // RECOGER TODOS LOS PRODUCTOS
 exports.findAllProducts = async (req, res) => {
     Product.find({}).exec().then((products) => {
-        console.log('RESPONSE FIND ALL PRODUCTS', products);
         res.status(200).json(products);
     }).catch((err) => {
         res.status(500).json(err);
