@@ -11,7 +11,6 @@ routes
   .route("/products")
   .get(ProductCtrl.findAllProducts)
   .post(ProductCtrl.addProduct)
-  .delete(ProductCtrl.deleteAll)
 
 routes
   .route("/products/:id")
@@ -20,7 +19,6 @@ routes
 
 routes
   .route("/valorations/:id")
-  .get(ValorationCtrl.findAllValorations)
   .post(ValorationCtrl.addValoration);
 
 module.exports = routes

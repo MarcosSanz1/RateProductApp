@@ -1,31 +1,7 @@
 const Valoration = require("../models/valoration.model.js");
 const Product = require("../models/product.model.js")
 
-// let idValoration = '';
-
-let idsValorations = []
-
-// RECOGER TODAS LAS VALORACIONES + RECOGER TODAS LAS VALORACIONES DE UN PRODUCTO
-exports.findAllValorations = async (req, res) => {
-    Product.findById(req.params.id, function(err, product) {
-        if(err) {
-            res.status(500).json(err)
-        } 
-        console.log('GET /products/:id' + req.params.id);
-        idsValorations = product.valorations
-
-        Valoration.find().where('_id').in(idsValorations).exec().then((valorations) => {
-            console.log('RESPONSE FIND ALL VALORATIONS', valorations);
-            res.status(200).json(valorations);
-        }).catch((err) => {
-            res.status(500).json(err);
-        });
-    });
-};
-
-// AQUÍ CADA VEZ QUE AÑADA UNA VALORACIÓN HAGO LA MEDIA Y MODIFICO EL VALOR DE rateTotal
-// AÑADIR UNA VALORACION Y SE AÑADIRÁ AL PRODUCTO
-// Esto recibe el id del producto por params y el contenido de la valoración por body
+// ADD VALORATION
 exports.addValoration = async (req, res) => {
     console.log("POST")
     console.log(req.body)

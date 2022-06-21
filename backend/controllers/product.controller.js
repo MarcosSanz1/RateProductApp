@@ -1,6 +1,6 @@
 const Product = require("../models/product.model.js");
 
-// RECOGER TODOS LOS PRODUCTOS
+// GET ALL PRODUCTS
 exports.findAllProducts = async (req, res) => {
     Product.find({}).exec().then((products) => {
         res.status(200).json(products);
@@ -9,7 +9,7 @@ exports.findAllProducts = async (req, res) => {
     });
 };
 
-// AÑADIR UN PRODUCTO
+// ADD A PRODUCT
 exports.addProduct = function (req, res) {
     console.log("POST")
     console.log(req.body)
@@ -30,19 +30,7 @@ exports.addProduct = function (req, res) {
     });
 }
 
-// BORRAR TODOS LOS PRODUCTOS
-exports.deleteAll = function (req, res) {
-    Product.find({}).exec().then((products) => {
-        products.remove(function (err) {
-            if (err) {
-                return res.status(500).send(err.message);
-            }
-            res.status(200).send();
-        });
-    })
-}
-
-// RECOGER UN SOLO PRODUCTO
+// GET A PRODUCT
 exports.findById = function (req, res) {
     Product.findById(req.params.id, function(err, product) {
         if(err) {
@@ -53,7 +41,7 @@ exports.findById = function (req, res) {
     });
 }
 
-// BORRAR UN PRODUCTO
+// DELETE A PRODUCTO
 exports.deleteProduct = function (req, res) {
     Product.findById(req.params.id, function (err, product) {
       product.remove(function (err) {
